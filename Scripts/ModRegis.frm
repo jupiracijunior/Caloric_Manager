@@ -13,6 +13,8 @@ Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = False
+Private genero As String, fator As Integer, resultadoTMB As Double
+
 Private Sub btnSlvAlt_Click()
     Dim doubleTxtPeso As Double, intTxtAltura As Integer, intTxtIdade As Integer, genero As String, calc1918 As Boolean, fator As Integer, _
     nome As String
@@ -52,10 +54,11 @@ End Sub
 
 Sub ModRegis()
     nomeInicial = Menu.nome
+    resultadoTMB = MathFun.calcTMB(txtNome.Value, CDbl(txtPeso.Value), CInt(txtAltura.Value), CInt(txtIdade.Value), genero, False)
     
     For i = 2 To Range("A1").End(xlDown).Row
         If nomeInicial = Cells(i, 1).Value Then
-            For j = 1 To 6
+            For j = 1 To 8
                 Select Case j
                     Case 1
                         Cells(i, j).Value = txtNome.Value
@@ -73,6 +76,10 @@ Sub ModRegis()
                         End If
                     Case 6
                         Cells(i, j).Value = intFactorToString(cbFatores.ListIndex)
+                    Case 7
+                        Cells(i, j).Value = resultadoTMB
+                    Case 8
+                        Cells(i, j).Value = MathFun.calcGET(resultadoTMB, fator)
                 End Select
             Next j
             Exit For
@@ -97,6 +104,7 @@ Private Sub UserForm_Activate()
     For i = 2 To Range("A1").End(xlDown).Row
         If Menu.nome = Cells(i, 1).Value Then
             cbFatores.ListIndex = Utils.StrFactorToInteger(Cells(i, 6).Value)
+            fator = Utils.StrFactorToInteger(Cells(i, 6).Value)
             Exit For
         End If
     Next i
@@ -106,13 +114,12 @@ Private Sub UserForm_Activate()
         If Menu.nome = Cells(i, 1).Value Then
             If Cells(i, 5).Value = "Mulher" Then
                 optBtnMulher.Value = True
+                genero = "Mulher"
             Else
                 optBtnHomem.Value = True
+                genero = "Homem"
             End If
             Exit For
         End If
     Next i
 End Sub
-
-
-

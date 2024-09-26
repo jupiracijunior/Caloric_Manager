@@ -14,8 +14,9 @@ Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = False
 Private Sub btnCalcTMB_Click()
-    Dim doubleTxtPeso As Double, intTxtAltura As Integer, intTxtIdade As Integer, genero As String, calc1918 As Boolean, fator As Integer, _
-    nome As String
+    Dim nome As String, doubleTxtPeso As Double, intTxtAltura As Integer, intTxtIdade As Integer, _
+    genero As String, fator As Integer, resultadoTMB As Double, gTotal As Double, calc1918 As Boolean
+
     
     On Error Resume Next 'cancela o tratamento de excecoes
     'trata o erro caso insiram uma letra ao inves de um numero
@@ -52,8 +53,9 @@ Private Sub btnCalcTMB_Click()
     'armazena o valor do campo nome
     nome = txtNome.Value
     
-    Call TMB.calcTMB(nome, doubleTxtPeso, intTxtAltura, intTxtIdade, genero, calc1918, fator)
-    Menu.updateListBox 'atuliza o listbox no userform Menu
+    resultadoTMB = MathFun.calcTMB(nome, doubleTxtPeso, intTxtAltura, intTxtIdade, genero, calc1918)
+    Call Utils.insertValuesOnSheets(nome, doubleTxtPeso, intTxtAltura, intTxtIdade, genero, fator, resultadoTMB, MathFun.calcGET(resultadoTMB, fator))
+    Menu.updateListBox 'atualiza o listbox no userform Menu
 End Sub
 
 Public Sub UserForm_Activate()

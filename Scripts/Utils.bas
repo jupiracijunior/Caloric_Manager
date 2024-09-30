@@ -4,8 +4,8 @@ Sub Botão1_Clique()
 End Sub
 
 Public Sub formatWidthColumns() 'formata a largura de todas as colunas preenchidas para exibir todo o conteudo
-    For j = 1 To Worksheets("TMB").Range("A1").End(xlToRight).Column
-        Worksheets("TMB").Columns(j).AutoFit
+    For j = 1 To Worksheets("Registros").Range("A1").End(xlToRight).Column
+        Worksheets("Registros").Columns(j).AutoFit
     Next j
 End Sub
 
@@ -23,32 +23,54 @@ Public Sub formatStyleCells()
 End Sub
 
 Public Sub insertValuesOnSheets(nome As String, peso As Double, altura As Integer, idade As Integer, genero As String, fator As Integer, resultadoTMB As Double, gTotal As Double)
-    Dim ultimaLinha As Integer
+    Dim ultimaLinha As Integer, data As String, newSheets As Worksheet
+    
+    data = Now
+    
+    For i = 1 To Sheets.count
+        If Sheets(i).name = nome Then
+            Sheets(i).Select
+            Exit For
+        Else
+            If i = Sheets.count Then
+                'Cria uma nova aba com o nomeDaAba
+                Sheets.Add(After:=Sheets(Sheets.count)).name = nome
+                Sheets(nome).Select
+                Exit For
+            End If
+        End If
+    Next i
+    
+    'Link voltar
+    Range("K2").Select
+    Range("K2").HorizontalAlignment = xlCenter
+    ActiveSheet.Hyperlinks.Add _
+        Anchor:=Selection, Address:="", SubAddress:= _
+        "Registros!A1", TextToDisplay:="Voltar"
+        'Range("F2").Font.Size = 15
     
     On Error Resume Next
-    ultimaLinha = Range("A1").End(xlDown).Row + 1 'dispara um erro caso a primeira linha nao esteja preenchida
+    ultimaLinha = Range("A1").End(xlDown).Row + 1
+    
     
     'verifica se a primeira linha nao esta vazia
     'primeiro if verifica se nao houve erro na busca da ultima linha
     If Err.Number = 0 Then
         'preenche com null caso o campo nome esteja vazio, se nao preenche com o valor do txtBox
         If nome = "" Then
-            Cells(ultimaLinha, 1).Value = "Null"
+            MsgBox "Campo nome é obrigatório"
+            Exit Sub
         Else
-            For i = 2 To ultimaLinha
-                If nome = Cells(i, 1).Value Then
-                    MsgBox "Este nome já foi registrado."
-                    Exit Sub 'encerra a execucao do sub caso o nome já exista
-                End If
-            Next i
-            Cells(ultimaLinha, 1).Value = nome
-            Cells(ultimaLinha, 2).Value = peso
-            Cells(ultimaLinha, 3).Value = altura
-            Cells(ultimaLinha, 4).Value = idade
-            Cells(ultimaLinha, 5).Value = genero
-            Cells(ultimaLinha, 6).Value = intFactorToString(fator)
-            Cells(ultimaLinha, 7).Value = resultadoTMB
-            Cells(ultimaLinha, 8).Value = gTotal
+            Worksheets(nome).Cells(ultimaLinha, 1).Value = nome
+            Worksheets(nome).Cells(ultimaLinha, 2).Value = peso
+            Worksheets(nome).Cells(ultimaLinha, 3).Value = altura
+            Worksheets(nome).Cells(ultimaLinha, 4).Value = idade
+            Worksheets(nome).Cells(ultimaLinha, 5).Value = genero
+            Worksheets(nome).Cells(ultimaLinha, 6).Value = intFactorToString(fator)
+            Worksheets(nome).Cells(ultimaLinha, 7).Value = resultadoTMB
+            Worksheets(nome).Cells(ultimaLinha, 8).Value = gTotal
+            Worksheets(nome).Cells(ultimaLinha, 9).Value = Split(data, " ")(0)
+            Worksheets(nome).Cells(ultimaLinha, 10).Value = Split(data, " ")(1)
         End If
         
     Else
@@ -56,14 +78,16 @@ Public Sub insertValuesOnSheets(nome As String, peso As Double, altura As Intege
         If nome = "" Then
             Cells(2, 1).Value = "Null"
         Else
-            Cells(2, 1).Value = nome
-            Cells(2, 2).Value = peso
-            Cells(2, 3).Value = idade
-            Cells(2, 4).Value = altura
-            Cells(2, 5).Value = genero
-            Cells(2, 6).Value = intFactorToString(fator)
-            Cells(2, 7).Value = resultadoTMB
-            Cells(2, 8).Value = gTotal
+            Worksheets(nome).Cells(2, 1).Value = nome
+            Worksheets(nome).Cells(2, 2).Value = peso
+            Worksheets(nome).Cells(2, 3).Value = idade
+            Worksheets(nome).Cells(2, 4).Value = altura
+            Worksheets(nome).Cells(2, 5).Value = genero
+            Worksheets(nome).Cells(2, 6).Value = intFactorToString(fator)
+            Worksheets(nome).Cells(2, 7).Value = resultadoTMB
+            Worksheets(nome).Cells(2, 8).Value = gTotal
+            Worksheets(nome).Cells(2, 9).Value = Split(Now, " ")(0)
+            Worksheets(nome).Cells(2, 10).Value = Split(Now, " ")(1)
         End If
     End If
     Err.Clear
@@ -71,6 +95,9 @@ Public Sub insertValuesOnSheets(nome As String, peso As Double, altura As Intege
 
     Call formatWidthColumns
     Call formatStyleCells
+    
+    Sheets("Registros").Select
+    Call criarIndice
 End Sub
 
 'em planejamento
@@ -109,3 +136,30 @@ Function intFactorToString(factor As Integer) As String
     
     intFactorToString = lvlActivity(factor)
 End Function
+
+Sub criarIndice()
+    Dim planilha As Worksheet
+    Dim linha As Integer
+    
+    linha = 2
+    
+    For Each planilha In Worksheets
+        
+        If planilha.name <> "Registros" And planilha.name <> "Dashboard" Then
+                    
+            Sheets("Registros").Select
+            Sheets("Registros").Cells(linha, 1).Select
+            ActiveSheet.Hyperlinks.Add _
+            Anchor:=Selection, Address:="", SubAddress:= _
+            planilha.name & "!A1", TextToDisplay:=planilha.name
+            Sheets("Registros").Range("A" & linha).Font.Size = 15
+            
+            linha = linha + 1
+                    
+        End If
+        
+    Next planilha
+    
+    Columns(1).AutoFit
+
+End Sub

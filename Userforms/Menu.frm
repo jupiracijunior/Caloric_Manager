@@ -54,6 +54,7 @@ Private Sub btnRmResgistro_Click()
 End Sub
 
 Private Sub UserForm_Activate()
+    Sheets("Registros").Select
     Call updateListBox
 End Sub
 
@@ -68,3 +69,4 @@ Public Sub updateListBox()
         Next i
     End If
 End Sub
+

@@ -13,7 +13,6 @@ Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = False
-Dim ultimaLinha As Integer
 Public nome As String, peso As Double, altura As Integer, idade As Integer
 
 Private Sub btnAddRegis_Click()
@@ -59,6 +58,7 @@ Private Sub UserForm_Activate()
 End Sub
 
 Public Sub updateListBox()
+    Dim ultimaLinha As Integer
     ltNomes.Clear
     
     If Cells(2, 1).Value <> "" Then
@@ -70,3 +70,29 @@ Public Sub updateListBox()
     End If
 End Sub
 
+Private Sub ltNomes_DblClick(ByVal Cancel As MSForms.ReturnBoolean)
+    Call up
+End Sub
+
+Sub up()
+    Dim name As String, linhaFinal As Integer
+    
+    name = ltNomes.List(ltNomes.ListIndex)
+    
+    ltNomes.Clear
+    
+    Sheets(name).Select
+    
+    If Sheets(name).Cells(2, 1) <> "" Then
+        linhaFinal = Range("A1").End(xlDown).Row
+    End If
+    
+    ltNomes.ColumnCount = 8
+    ltNomes.ColumnHeads = True
+    ltNomes.RowSource = "A1:H" & linhaFinal
+    ltNomes.ColumnWidths = "50pt; 30pt; 100pt; 100pt; 100pt; 120pt; 100pt; 100pt;"
+    
+    linhaFinal = 0
+    Sheets("Registros").Select
+    Exit Sub
+End Sub

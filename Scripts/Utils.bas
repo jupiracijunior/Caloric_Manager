@@ -27,14 +27,14 @@ Public Sub insertValuesOnSheets(nome As String, peso As Double, altura As Intege
     
     data = Now
     
-    For i = 1 To Sheets.count
+    For i = 1 To Sheets.Count
         If Sheets(i).name = nome Then
             Sheets(i).Select
             Exit For
         Else
-            If i = Sheets.count Then
+            If i = Sheets.Count Then
                 'Cria uma nova aba com o nomeDaAba
-                Sheets.Add(After:=Sheets(Sheets.count)).name = nome
+                Sheets.Add(After:=Sheets(Sheets.Count)).name = nome
                 Sheets(nome).Select
                 Exit For
             End If

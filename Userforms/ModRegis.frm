@@ -14,6 +14,48 @@ Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = False
 Private genero As String, fator As Integer, resultadoTMB As Double
+Public name As String, indexLine
+
+Private Sub UserForm_Activate()
+    Sheets(name).Select
+    
+    'pega os valores para os campos de dados
+    txtNome.Value = Me.name
+    txtPeso.Value = Cells(Me.indexLine, 2).Value
+    txtAltura.Value = Cells(Me.indexLine, 3).Value
+    txtIdade.Value = Cells(Me.indexLine, 4).Value
+    
+    'insere os valores do listbox (cbFatores)
+    cbFatores.AddItem "Sedentário"
+    cbFatores.AddItem "Levemente ativo"
+    cbFatores.AddItem "Moderadamente ativo"
+    cbFatores.AddItem "Altamente ativo"
+    cbFatores.AddItem "Extremamente ativo"
+    
+    For i = 2 To Range("A1").End(xlDown).Row
+        If Me.name = Cells(i, 1).Value Then
+            cbFatores.ListIndex = Utils.StrFactorToInteger(Cells(i, 6).Value)
+            fator = Utils.StrFactorToInteger(Cells(i, 6).Value)
+            Exit For
+        End If
+    Next i
+    
+    'insere os valores dos OptionButtons (opBtn)
+    For i = 2 To Range("A1").End(xlDown).Row
+        If Me.name = Cells(i, 1).Value Then
+            If Cells(i, 5).Value = "Mulher" Then
+                optBtnMulher.Value = True
+                genero = "Mulher"
+            Else
+                optBtnHomem.Value = True
+                genero = "Homem"
+            End If
+            Exit For
+        End If
+    Next i
+    
+    Sheets("Registros").Select
+End Sub
 
 Private Sub btnSlvAlt_Click()
     Dim doubleTxtPeso As Double, intTxtAltura As Integer, intTxtIdade As Integer, genero As String, calc1918 As Boolean, fator As Integer, _
@@ -53,7 +95,9 @@ Private Sub btnSlvAlt_Click()
 End Sub
 
 Sub ModRegis()
-    nomeInicial = Menu.nome
+    Sheets(Me.name).Select
+    
+    nomeInicial = Me.name
     resultadoTMB = MathFun.calcTMB(txtNome.Value, CDbl(txtPeso.Value), CInt(txtAltura.Value), CInt(txtIdade.Value), genero, False)
     
     For i = 2 To Range("A1").End(xlDown).Row
@@ -82,43 +126,6 @@ Sub ModRegis()
                         Cells(i, j).Value = MathFun.calcGET(resultadoTMB, fator)
                 End Select
             Next j
-            Exit For
-        End If
-    Next i
-End Sub
-
-Private Sub UserForm_Activate()
-    'pega os valores para os campos de dados
-    txtNome.Value = Menu.nome
-    txtPeso.Value = Menu.peso
-    txtAltura.Value = Menu.altura
-    txtIdade.Value = Menu.idade
-    
-    'insere os valores do listbox (cbFatores)
-    cbFatores.AddItem "Sedentário"
-    cbFatores.AddItem "Levemente ativo"
-    cbFatores.AddItem "Moderadamente ativo"
-    cbFatores.AddItem "Altamente ativo"
-    cbFatores.AddItem "Extremamente ativo"
-    
-    For i = 2 To Range("A1").End(xlDown).Row
-        If Menu.nome = Cells(i, 1).Value Then
-            cbFatores.ListIndex = Utils.StrFactorToInteger(Cells(i, 6).Value)
-            fator = Utils.StrFactorToInteger(Cells(i, 6).Value)
-            Exit For
-        End If
-    Next i
-    
-    'insere os valores dos OptionButtons (opBtn)
-    For i = 2 To Range("A1").End(xlDown).Row
-        If Menu.nome = Cells(i, 1).Value Then
-            If Cells(i, 5).Value = "Mulher" Then
-                optBtnMulher.Value = True
-                genero = "Mulher"
-            Else
-                optBtnHomem.Value = True
-                genero = "Homem"
-            End If
             Exit For
         End If
     Next i

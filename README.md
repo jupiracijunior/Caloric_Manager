@@ -1,5 +1,3 @@
-## Guia Calórico
-
 # Gerenciador Calórico
 
 Abra o menu para adicionar registros calóricos de seus clientes, amigos ou registro próprio. Após inserir as informações será calculado e registrado, automaticamente, o TMB e GET.

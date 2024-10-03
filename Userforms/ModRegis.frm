@@ -21,6 +21,7 @@ Private Sub UserForm_Activate()
     
     'pega os valores para os campos de dados
     txtNome.Value = Me.name
+    txtNome.Enabled = False
     txtPeso.Value = Cells(Me.indexLine, 2).Value
     txtAltura.Value = Cells(Me.indexLine, 3).Value
     txtIdade.Value = Cells(Me.indexLine, 4).Value
@@ -53,13 +54,79 @@ Private Sub UserForm_Activate()
             Exit For
         End If
     Next i
-    
-    Sheets("Registros").Select
 End Sub
 
 Private Sub btnSlvAlt_Click()
-    Dim doubleTxtPeso As Double, intTxtAltura As Integer, intTxtIdade As Integer, genero As String, calc1918 As Boolean, fator As Integer, _
-    nome As String
+    Call checkFielsIsNotEmpty
+    Call ModRegis
+    Menu.fullUpdateListBox
+    Unload Me 'fecha o userforme
+End Sub
+
+Sub ModRegis()
+    Sheets(Me.name).Select
+    
+    nomeInicial = Me.name
+    resultadoTMB = MathFun.calcTMB(txtNome.Value, CDbl(txtPeso.Value), CInt(txtAltura.Value), CInt(txtIdade.Value), genero, False)
+    
+    Cells(indexLine, 1).Value = txtNome.Value
+    Cells(indexLine, 2).Value = txtPeso.Value
+    Cells(indexLine, 3).Value = txtAltura.Value
+    Cells(indexLine, 4).Value = txtIdade.Value
+    If optBtnHomem.Value = "Verdadeiro" Then
+        Cells(indexLine, 5).Value = "Homem"
+    Else
+        Cells(indexLine, 5).Value = "Mulher"
+    End If
+    Cells(indexLine, 6).Value = intFactorToString(cbFatores.ListIndex)
+    Cells(indexLine, 7).Value = resultadoTMB
+    Cells(indexLine, 8).Value = MathFun.calcGET(resultadoTMB, cbFatores.ListIndex)
+    
+    
+    'For i = 2 To Range("A1").End(xlDown).Row
+    '    If nomeInicial = Cells(i, 1).Value Then
+    '        For j = 1 To 8
+    '            Select Case j
+    '                Case 1
+    '                    Cells(i, j).Value = txtNome.Value
+    '                Case 2
+    '                    Cells(i, j).Value = txtPeso.Value
+    '                Case 3
+    '                    Cells(i, j).Value = txtAltura.Value
+    '                Case 4
+    '                    Cells(i, j).Value = txtIdade.Value
+    '                Case 5
+    '                    If optBtnHomem.Value = "Verdadeiro" Then
+    '                        Cells(i, j).Value = "Homem"
+    '                    Else
+    '                        Cells(i, j).Value = "Mulher"
+    '                    End If
+    '                Case 6
+    '                    Cells(i, j).Value = intFactorToString(cbFatores.ListIndex)
+    '                Case 7
+    '                    Cells(i, j).Value = resultadoTMB
+    '                Case 8
+    '                    Cells(i, j).Value = MathFun.calcGET(resultadoTMB, fator)
+    '            End Select
+    '        Next j
+    '        Exit For
+    '    End If
+    'Next i
+End Sub
+
+Private Sub checkFielsIsNotEmpty()
+    Dim nome As String
+    Dim doubleTxtPeso As Double
+    Dim intTxtAltura As Integer
+    Dim intTxtIdade As Integer
+    Dim genero As String
+    Dim calc1918 As Boolean
+    
+    'verifica se o nome foi preenchido
+    If txtNome.Value = "" Then
+        MsgBox "Insira um nome"
+        Exit Sub
+    End If
     
     On Error Resume Next 'cancela o tratamento de excecoes
     'trata o erro caso insiram uma letra ao inves de um numero
@@ -82,51 +149,4 @@ Private Sub btnSlvAlt_Click()
         Else
         MsgBox "Selecione um gênero"
     End If
-    
-    'guarda se a preferencia pela formula de 1918, ao inves de 1984, foi marcada
-    
-    'salva o fator selecionado
-    fator = cbFatores.ListIndex
-    
-    nome = txtNome.Value
-    Call ModRegis
-    Menu.updateListBox
-    Unload Me 'fecha o userforme
-End Sub
-
-Sub ModRegis()
-    Sheets(Me.name).Select
-    
-    nomeInicial = Me.name
-    resultadoTMB = MathFun.calcTMB(txtNome.Value, CDbl(txtPeso.Value), CInt(txtAltura.Value), CInt(txtIdade.Value), genero, False)
-    
-    For i = 2 To Range("A1").End(xlDown).Row
-        If nomeInicial = Cells(i, 1).Value Then
-            For j = 1 To 8
-                Select Case j
-                    Case 1
-                        Cells(i, j).Value = txtNome.Value
-                    Case 2
-                        Cells(i, j).Value = txtPeso.Value
-                    Case 3
-                        Cells(i, j).Value = txtAltura.Value
-                    Case 4
-                        Cells(i, j).Value = txtIdade.Value
-                    Case 5
-                        If optBtnHomem.Value = "Verdadeiro" Then
-                            Cells(i, j).Value = "Homem"
-                        Else
-                            Cells(i, j).Value = "Mulher"
-                        End If
-                    Case 6
-                        Cells(i, j).Value = intFactorToString(cbFatores.ListIndex)
-                    Case 7
-                        Cells(i, j).Value = resultadoTMB
-                    Case 8
-                        Cells(i, j).Value = MathFun.calcGET(resultadoTMB, fator)
-                End Select
-            Next j
-            Exit For
-        End If
-    Next i
 End Sub

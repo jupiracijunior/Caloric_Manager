@@ -43,7 +43,7 @@ End Sub
 
 Private Sub UserForm_Activate()
     Sheets("Registros").Select
-    Call updateListBox
+    Call updateOnlyNamesToListBox
 End Sub
 
 Private Sub ltNomes1_DblClick(ByVal Cancel As MSForms.ReturnBoolean)
@@ -52,7 +52,7 @@ End Sub
 
 Private Sub ltNomes2_DblClick(ByVal Cancel As MSForms.ReturnBoolean)
     ModRegis.name = ltNomes2.List(ltNomes2.ListIndex)
-    ModRegis.indexLine = ltNomes2.ListIndex
+    ModRegis.indexLine = ltNomes2.ListIndex + 1
     ModRegis.Show
 End Sub
 
@@ -95,7 +95,7 @@ End Sub
 '        Next i
 'End Sub
 
-Public Sub updateListBox()
+Public Sub updateOnlyNamesToListBox()
     Dim ultimaLinha As Integer
     ltNomes1.Clear
     
@@ -105,6 +105,18 @@ Public Sub updateListBox()
         For i = 2 To ultimaLinha
             ltNomes1.AddItem (Cells(i, 1).Value)
         Next i
+    End If
+End Sub
+
+Public Sub fullUpdateListBox()
+    Sheets(ModRegis.name).Select
+    
+    Dim ultimaLinha As Integer
+    
+    If Cells(2, 1).Value <> "" Then
+        ultimaLinha = Range("A1").End(xlDown).Row
+        
+        ltNomes2.RowSource = "A1:H" & ultimaLinha
     End If
 End Sub
 

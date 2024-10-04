@@ -4,8 +4,8 @@ Sub Botão1_Clique()
 End Sub
 
 Public Sub formatWidthColumns() 'formata a largura de todas as colunas preenchidas para exibir todo o conteudo
-    For j = 1 To Worksheets("Registros").Range("A1").End(xlToRight).Column
-        Worksheets("Registros").Columns(j).AutoFit
+    For j = 1 To Range("A1").End(xlToRight).Column
+        Columns(j).AutoFit
     Next j
 End Sub
 
@@ -40,6 +40,9 @@ Public Sub insertValuesOnSheets(nome As String, peso As Double, altura As Intege
             End If
         End If
     Next i
+    
+    'Adiciona os cabecalhos
+    Call createHeaders
     
     'Link voltar
     Range("K2").Select
@@ -98,6 +101,8 @@ Public Sub insertValuesOnSheets(nome As String, peso As Double, altura As Intege
     
     Sheets("Registros").Select
     Call criarIndice
+    Call formatWidthColumns
+    Call formatStyleCells
 End Sub
 
 'em planejamento
@@ -152,7 +157,7 @@ Sub criarIndice()
             ActiveSheet.Hyperlinks.Add _
             Anchor:=Selection, Address:="", SubAddress:= _
             planilha.name & "!A1", TextToDisplay:=planilha.name
-            Sheets("Registros").Range("A" & linha).Font.Size = 15
+            Sheets("Registros").Range("A" & linha).Font.Size = 12
             
             linha = linha + 1
                     
@@ -162,4 +167,20 @@ Sub criarIndice()
     
     Columns(1).AutoFit
 
+End Sub
+
+Private Sub createHeaders()
+    Cells(1, 1).Value = "Nome"
+    Cells(1, 2).Value = "Peso (kg)"
+    Cells(1, 3).Value = "Altura (cm)"
+    Cells(1, 4).Value = "Idade"
+    Cells(1, 5).Value = "Gênero"
+    Cells(1, 6).Value = "Nível de Atividade"
+    Cells(1, 7).Value = "Taxa Metabólica Basal"
+    Cells(1, 8).Value = "Gasto Energético Total"
+    Cells(1, 9).Value = "Data"
+    Cells(1, 10).Value = "Hora"
+    
+    Range("A1:H1").Interior.Color = RGB(255, 255, 0)
+    Range("I1:J1").Interior.Color = RGB(112, 173, 71)
 End Sub

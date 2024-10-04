@@ -55,7 +55,7 @@ Private Sub btnCalcTMB_Click()
     
     resultadoTMB = MathFun.calcTMB(nome, doubleTxtPeso, intTxtAltura, intTxtIdade, genero, calc1918)
     Call Utils.insertValuesOnSheets(nome, doubleTxtPeso, intTxtAltura, intTxtIdade, genero, fator, resultadoTMB, MathFun.calcGET(resultadoTMB, fator))
-    Menu.updateListBox 'atualiza o listbox no userform Menu
+    Menu.updateOnlyNamesToListBox 'atualiza o listbox no userform Menu
 End Sub
 
 Public Sub UserForm_Activate()

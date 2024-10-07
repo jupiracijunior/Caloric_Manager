@@ -184,3 +184,8 @@ Private Sub createHeaders()
     Range("A1:H1").Interior.Color = RGB(255, 255, 0)
     Range("I1:J1").Interior.Color = RGB(112, 173, 71)
 End Sub
+
+Public Function rangeToArray()
+    
+End Function
+
